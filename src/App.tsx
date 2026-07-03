@@ -1,70 +1,69 @@
+import { useState } from "react";
 import "./App.css";
 import Sidebar from "./components/Sidebar";
 
 function App() {
+  const [command, setCommand] = useState("");
+  const [reply, setReply] = useState("");
+
   return (
     <div className="app">
       <Sidebar />
 
       <main className="dashboard">
-        <h1>📊 Professional Dashboard</h1>
-        <p>Akky OS Command Center - Live Business Overview</p>
-
-        <section className="cards">
-          <div className="card">
-            <p>Total Leads</p>
-            <h2>1,245</h2>
-            <span>+12% this week</span>
+        <div className="hero-section">
+          <div>
+            <p className="eyebrow">Akky OS Command Center</p>
+            <h1>📊 Professional Dashboard</h1>
+            <p className="subtitle">
+              Live business overview, AI agents, tasks and growth control.
+            </p>
           </div>
 
-          <div className="card">
-            <p>Clients</p>
-            <h2>328</h2>
-            <span>+8 new</span>
+          <button className="primary-btn">
+            ⚡ Run Daily System
+          </button>
+        </div>
+
+        <section className="ai-command">
+          <h2>🤖 Ask Akky AI</h2>
+
+          <p>
+            Type your command and let Akky OS prepare the next action.
+          </p>
+
+          <div className="command-row">
+            <input
+              type="text"
+              value={command}
+              onChange={(e) => setCommand(e.target.value)}
+              placeholder="Example: Show today's leads..."
+            />
+
+            <button
+              onClick={() => {
+                if (command === "") {
+                  setReply("Please type a command.");
+                } else {
+                  setReply("Akky AI received");
+                }
+              }}
+            >
+              Execute
+            </button>
           </div>
 
-          <div className="card">
-            <p>Tasks</p>
-            <h2>47</h2>
-            <span>12 urgent</span>
-          </div>
-
-          <div className="card">
-            <p>AI Agents</p>
-            <h2>8 Active</h2>
-            <span>All systems online</span>
-          </div>
-        </section>
-
-        <section className="dashboard-grid">
-          <div className="panel">
-            <h2>🤖 AI Agent Status</h2>
-
-            <div className="agent">
-              <span>Lead Finder Agent</span>
-              <strong className="online">🟢 Online</strong>
+          {reply && (
+            <div style={{ marginTop: "15px", color: "#22c55e" }}>
+              {reply}
             </div>
+          )}
 
-            <div className="agent">
-              <span>Task Manager Agent</span>
-              <strong className="working">🟡 Working</strong>
-            </div>
-
-            <div className="agent">
-              <span>Report Agent</span>
-              <strong className="offline">🔴 Offline</strong>
-            </div>
-          </div>
-
-          <div className="panel">
-            <h2>✅ Today's Tasks</h2>
-
-            <ul className="task-list">
-              <li>Call 5 new leads</li>
-              <li>Prepare client follow-up report</li>
-              <li>Review AI agent output</li>
-              <li>Update dashboard data</li>
-            </ul>
+          <div className="quick-actions">
+            <button>📊 Daily Report</button>
+            <button>👥 New Lead</button>
+            <button>📞 Follow Up</button>
+            <button>🤖 Run Agents</button>
           </div>
         </section>
       </main>
