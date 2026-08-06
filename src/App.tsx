@@ -1,5 +1,7 @@
 import { useState, type CSSProperties, type PointerEvent } from "react";
 import "./App.css";
+import AdminLogin from "./components/AdminLogin";
+import CustomerPortal from "./components/CustomerPortal";
 
 type Screen = "universe" | "product";
 
@@ -22,6 +24,9 @@ const product = {
 function App() {
   const [screen, setScreen] = useState<Screen>("universe");
   const [notice, setNotice] = useState("");
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [showCustomerPortal, setShowCustomerPortal] = useState(false);
+  const [adminName, setAdminName] = useState("");
 
   const tiltProduct = (event: PointerEvent<HTMLButtonElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -43,6 +48,12 @@ function App() {
     window.setTimeout(() => setNotice(""), 4000);
   };
 
+  const adminAuthenticated = (name: string) => {
+    setAdminName(name);
+    setShowAdminLogin(false);
+    setNotice(`Welcome ${name}. Admin Console next screen me connect hoga.`);
+  };
+
   return (
     <main className={`cosmos ${screen === "product" ? "product-is-open" : ""}`}>
       <div className="aurora aurora-one" />
@@ -57,10 +68,10 @@ function App() {
         <nav aria-label="Primary navigation">
           <button className="active" onClick={() => setScreen("universe")}>Universe</button>
           <button onClick={() => setScreen("product")}>Products</button>
-          <button onClick={() => setNotice("Customer portal next module me activate hoga.")}>My AkkyOS</button>
+          <button onClick={() => setShowCustomerPortal(true)}>My AkkyOS</button>
         </nav>
-        <button className="login-pill" onClick={() => setNotice("Secure login next module me connect hoga.")}>
-          <span /> Sign in
+        <button className="login-pill" onClick={() => adminName ? setShowAdminLogin(true) : setShowCustomerPortal(true)}>
+          <span /> {adminName ? "Admin Console" : "Customer sign in"}
         </button>
       </header>
 
@@ -143,6 +154,21 @@ function App() {
       )}
 
       {notice && <div className="toast" role="status"><span>AK</span>{notice}</div>}
+      {showAdminLogin && (
+        <AdminLogin
+          onClose={() => setShowAdminLogin(false)}
+          onAdminAuthenticated={adminAuthenticated}
+        />
+      )}
+      {showCustomerPortal && (
+        <CustomerPortal
+          onClose={() => setShowCustomerPortal(false)}
+          onAdminAccess={() => {
+            setShowCustomerPortal(false);
+            setShowAdminLogin(true);
+          }}
+        />
+      )}
     </main>
   );
 }
