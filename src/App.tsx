@@ -1,270 +1,149 @@
-import { useMemo, useState, type CSSProperties } from "react";
+import { useState, type CSSProperties, type PointerEvent } from "react";
 import "./App.css";
-import Sidebar from "./components/Sidebar";
 
-type Metric = {
-  label: string;
-  value: string;
-  hint: string;
-  tone: "violet" | "cyan" | "amber" | "green";
+type Screen = "universe" | "product";
+
+const product = {
+  name: "Shiv Shakti Recovery CRM V2",
+  shortName: "Shiv Shakti V2",
+  category: "Recovery Operations",
+  description:
+    "A complete field recovery command system for cases, executives, verified visits, live GPS, payments and reports.",
+  features: [
+    "Case command center",
+    "GPS verified field visits",
+    "Photo proof with location",
+    "Executive mobile workflow",
+    "Payment and recovery reports",
+    "Secure role-based access",
+  ],
 };
 
-const pipelineStages = [
-  "New",
-  "Contacted",
-  "Qualified",
-  "Proposal",
-  "Won",
-];
-
 function App() {
-  const [activeMenu, setActiveMenu] = useState("Overview");
-  const [search, setSearch] = useState("");
-  const [showCapture, setShowCapture] = useState(false);
+  const [screen, setScreen] = useState<Screen>("universe");
+  const [notice, setNotice] = useState("");
 
-  const metrics = useMemo<Metric[]>(
-    () => [
-      {
-        label: "Total leads",
-        value: "—",
-        hint: "Connect lead data",
-        tone: "violet",
-      },
-      {
-        label: "New today",
-        value: "—",
-        hint: "No activity yet",
-        tone: "cyan",
-      },
-      {
-        label: "Follow-ups due",
-        value: "—",
-        hint: "Agenda is clear",
-        tone: "amber",
-      },
-      {
-        label: "Won value",
-        value: "—",
-        hint: "No closed deals",
-        tone: "green",
-      },
-    ],
-    [],
-  );
+  const tiltProduct = (event: PointerEvent<HTMLButtonElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+    const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+    event.currentTarget.style.setProperty("--rx", `${-y * 13}deg`);
+    event.currentTarget.style.setProperty("--ry", `${x * 17}deg`);
+    event.currentTarget.style.setProperty("--mx", `${(x + 0.5) * 100}%`);
+    event.currentTarget.style.setProperty("--my", `${(y + 0.5) * 100}%`);
+  };
+
+  const resetTilt = (event: PointerEvent<HTMLButtonElement>) => {
+    event.currentTarget.style.setProperty("--rx", "0deg");
+    event.currentTarget.style.setProperty("--ry", "0deg");
+  };
+
+  const requestAccess = () => {
+    setNotice("Request access form payment setup ke saath next module me connect hoga.");
+    window.setTimeout(() => setNotice(""), 4000);
+  };
 
   return (
-    <div className="app-shell">
-      <Sidebar activeMenu={activeMenu} onMenuChange={setActiveMenu} />
+    <main className={`cosmos ${screen === "product" ? "product-is-open" : ""}`}>
+      <div className="aurora aurora-one" />
+      <div className="aurora aurora-two" />
+      <div className="noise" />
 
-      <main className="dashboard-shell">
-        <header className="topbar">
-          <div className="mobile-brand">
-            <span>AO</span>
-            <strong>AkkyOS</strong>
-          </div>
+      <header className="site-header">
+        <button className="brand" onClick={() => setScreen("universe")} aria-label="AkkyOS home">
+          <span className="brand-cube"><i>A</i></span>
+          <span><strong>AkkyOS</strong><small>PRODUCT UNIVERSE</small></span>
+        </button>
+        <nav aria-label="Primary navigation">
+          <button className="active" onClick={() => setScreen("universe")}>Universe</button>
+          <button onClick={() => setScreen("product")}>Products</button>
+          <button onClick={() => setNotice("Customer portal next module me activate hoga.")}>My AkkyOS</button>
+        </nav>
+        <button className="login-pill" onClick={() => setNotice("Secure login next module me connect hoga.")}>
+          <span /> Sign in
+        </button>
+      </header>
 
-          <label className="global-search">
-            <span aria-hidden="true">⌕</span>
-            <input
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search leads, contacts or tasks"
-              aria-label="Search workspace"
-            />
-            <kbd>⌘ K</kbd>
-          </label>
-
-          <div className="topbar-actions">
-            <button className="icon-button" aria-label="Notifications">
-              <span>○</span>
-            </button>
-            <button className="profile-button">
-              <span className="avatar">AP</span>
-              <span className="profile-copy">
-                <strong>Workspace owner</strong>
-                <small>Company workspace</small>
-              </span>
-              <span>⌄</span>
-            </button>
-          </div>
-        </header>
-
-        <div className="dashboard-content">
-          <section className="welcome-row">
-            <div>
-              <p className="section-kicker">LEADS COMMAND DECK</p>
-              <h1>Make every lead move forward.</h1>
-              <p className="welcome-copy">
-                One focused view for pipeline health, next actions and your
-                team’s momentum.
-              </p>
-            </div>
-
-            <div className="welcome-actions">
-              <button className="secondary-button">Import leads</button>
-              <button
-                className="primary-button"
-                onClick={() => setShowCapture(true)}
-              >
-                <span>＋</span> Capture lead
-              </button>
-            </div>
-          </section>
-
-          <section className="metric-grid" aria-label="Lead metrics">
-            {metrics.map((metric) => (
-              <article className={`metric-card ${metric.tone}`} key={metric.label}>
-                <div className="metric-topline">
-                  <span>{metric.label}</span>
-                  <span className="metric-dot" />
-                </div>
-                <strong>{metric.value}</strong>
-                <small>{metric.hint}</small>
-              </article>
-            ))}
-          </section>
-
-          <section className="dashboard-grid">
-            <article className="panel pipeline-panel">
-              <div className="panel-heading">
-                <div>
-                  <span className="panel-label">PIPELINE PULSE</span>
-                  <h2>Lead movement</h2>
-                </div>
-                <button className="text-button">View pipeline →</button>
-              </div>
-
-              <div className="pipeline-track">
-                {pipelineStages.map((stage, index) => (
-                  <div className="pipeline-stage" key={stage}>
-                    <div className="stage-rail">
-                      <span style={{ "--stage-index": index } as CSSProperties} />
-                    </div>
-                    <strong>{stage}</strong>
-                    <small>No leads</small>
-                  </div>
-                ))}
-              </div>
-
-              <div className="panel-empty compact-empty">
-                <span className="empty-orbit">↗</span>
-                <div>
-                  <strong>Your pipeline is ready.</strong>
-                  <p>Capture or import the first lead to see movement here.</p>
-                </div>
-              </div>
-            </article>
-
-            <article className="panel focus-panel">
-              <div className="panel-heading">
-                <div>
-                  <span className="panel-label">TODAY’S FOCUS</span>
-                  <h2>Next actions</h2>
-                </div>
-                <span className="live-badge">LIVE</span>
-              </div>
-
-              <div className="focus-ring">
-                <div>
-                  <strong>0</strong>
-                  <span>due now</span>
-                </div>
-              </div>
-
-              <div className="focus-copy">
-                <strong>Nothing is overdue</strong>
-                <p>New follow-ups will appear here by priority.</p>
-              </div>
-              <button className="wide-ghost-button">Open follow-up desk</button>
-            </article>
-
-            <article className="panel leads-panel">
-              <div className="panel-heading">
-                <div>
-                  <span className="panel-label">LATEST SIGNALS</span>
-                  <h2>Recent leads</h2>
-                </div>
-                <div className="segmented-control">
-                  <button className="selected">All</button>
-                  <button>Mine</button>
-                </div>
-              </div>
-
-              <div className="table-head">
-                <span>Lead</span>
-                <span>Source</span>
-                <span>Stage</span>
-                <span>Next action</span>
-              </div>
-              <div className="panel-empty lead-empty">
-                <span className="empty-stack">◇</span>
-                <strong>No leads in this workspace yet</strong>
-                <p>Start with a single lead or bring your existing list.</p>
-                <div>
-                  <button className="secondary-button">Import list</button>
-                  <button
-                    className="primary-button small"
-                    onClick={() => setShowCapture(true)}
-                  >
-                    Add first lead
-                  </button>
-                </div>
-              </div>
-            </article>
-
-            <article className="panel source-panel">
-              <div className="panel-heading">
-                <div>
-                  <span className="panel-label">SOURCE QUALITY</span>
-                  <h2>Where leads convert</h2>
-                </div>
-              </div>
-              <div className="source-visual">
-                <div className="source-axis">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-                <div className="source-placeholder">
-                  <span>Connect lead sources</span>
-                </div>
-              </div>
-              <p className="source-note">
-                Conversion insights appear after your first qualified lead.
-              </p>
-            </article>
-          </section>
-        </div>
-      </main>
-
-      {showCapture && (
-        <div className="modal-backdrop" role="presentation">
-          <section className="capture-modal" role="dialog" aria-modal="true">
-            <button
-              className="modal-close"
-              onClick={() => setShowCapture(false)}
-              aria-label="Close"
-            >
-              ×
-            </button>
-            <span className="panel-label">QUICK CAPTURE</span>
-            <h2>Add your first lead</h2>
-            <p>
-              Lead storage will activate after the secure Supabase schema is
-              connected.
+      {screen === "universe" ? (
+        <section className="universe-screen">
+          <div className="hero-copy">
+            <p className="eyebrow"><span /> INDIA'S PRODUCT OPERATING SYSTEM</p>
+            <h1>
+              <span className="hero-name">AKKYOS</span>
+              <small>Software that feels <em>alive.</em></small>
+            </h1>
+            <p className="hero-description">
+              Discover powerful business products built inside one intelligent universe. Enter a product, explore its world and choose what moves your business forward.
             </p>
-            <div className="modal-preview-fields">
-              <span>Full name</span>
-              <span>Mobile number</span>
-              <span>Lead source</span>
+            <div className="hero-actions">
+              <button className="primary-cta" onClick={() => setScreen("product")}>Explore first product <span>↗</span></button>
+              <span className="release-note"><i /> 01 product live</span>
             </div>
-            <button className="primary-button" onClick={() => setShowCapture(false)}>
-              Continue setup
+          </div>
+
+          <div className="product-stage">
+            <div className="orbit orbit-a" />
+            <div className="orbit orbit-b" />
+            <div className="orbit orbit-c" />
+            <span className="satellite satellite-a" />
+            <span className="satellite satellite-b" />
+            <button
+              className="product-object"
+              onPointerMove={tiltProduct}
+              onPointerLeave={resetTilt}
+              onClick={() => setScreen("product")}
+              style={{ "--rx": "0deg", "--ry": "0deg", "--mx": "50%", "--my": "50%" } as CSSProperties}
+            >
+              <span className="object-glow" />
+              <span className="product-glass">
+                <span className="product-index">PRODUCT / 001</span>
+                <img src="/shiv-shakti-app-icon.png" alt="Shiv Shakti Recovery CRM" />
+                <span className="product-type">{product.category}</span>
+                <strong>{product.shortName}</strong>
+                <span className="enter-label">ENTER PRODUCT <i>↗</i></span>
+              </span>
             </button>
-          </section>
-        </div>
+            <p className="drag-hint"><span>↔</span> Move over the product</p>
+          </div>
+
+          <div className="universe-footer">
+            <span>AKKYOS.IN</span>
+            <p>One account. Every product. Infinite possibility.</p>
+            <span>EST. 2026</span>
+          </div>
+        </section>
+      ) : (
+        <section className="product-screen">
+          <button className="back-button" onClick={() => setScreen("universe")}><span>←</span> Back to universe</button>
+          <div className="product-visual">
+            <div className="visual-halo" />
+            <div className="visual-ring ring-one" />
+            <div className="visual-ring ring-two" />
+            <div className="app-icon-shell"><img src="/shiv-shakti-app-icon.png" alt="Shiv Shakti Recovery CRM V2" /></div>
+            <span className="visual-chip chip-one">GPS LIVE</span>
+            <span className="visual-chip chip-two">FIELD PROOF</span>
+            <span className="visual-chip chip-three">SECURE CRM</span>
+          </div>
+          <div className="product-story">
+            <p className="eyebrow"><span /> AKKYOS ORIGINAL · PRODUCT 001</p>
+            <h2>{product.name}</h2>
+            <p className="product-description">{product.description}</p>
+            <div className="feature-grid">
+              {product.features.map((feature, index) => (
+                <article key={feature}><span>{String(index + 1).padStart(2, "0")}</span><strong>{feature}</strong></article>
+              ))}
+            </div>
+            <div className="product-actions">
+              <button className="primary-cta" onClick={requestAccess}>Request access <span>↗</span></button>
+              <div><small>Platform</small><strong>Web + Android</strong></div>
+              <div><small>Status</small><strong><i /> Production ready</strong></div>
+            </div>
+          </div>
+        </section>
       )}
-    </div>
+
+      {notice && <div className="toast" role="status"><span>AK</span>{notice}</div>}
+    </main>
   );
 }
 

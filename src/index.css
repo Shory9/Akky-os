@@ -1,12 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
 :root {
-  font-family: "DM Sans", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #30283e;
-  background: #fff9fb;
+  font-family: "Manrope", sans-serif;
+  color: #fff;
+  background: #08070c;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
 
-html { min-width: 320px; background: #fff9fb; }
+* { box-sizing: border-box; }
+html { min-width: 320px; background: #08070c; }
 body { margin: 0; min-width: 320px; min-height: 100vh; }
-button, input { font-family: inherit; }
-::selection { background: #f2b4cc; color: #4a2940; }
+button { font: inherit; }
+button:focus-visible { outline: 2px solid #ffc1d8; outline-offset: 4px; }
+::selection { background: #db6f9c; color: #fff; }
