@@ -1,37 +1,81 @@
-function Sidebar() {
-  const menuItems = [
-    { icon: "🏠", label: "Dashboard" },
-    { icon: "🤖", label: "AI Agents" },
-    { icon: "👥", label: "CRM" },
-    { icon: "💰", label: "Sales" },
-    { icon: "📋", label: "Projects" },
-    { icon: "📞", label: "Recovery" },
-    { icon: "📊", label: "Reports" },
-    { icon: "⚙️", label: "Settings" },
-  ];
+type SidebarProps = {
+  activeMenu: string;
+  onMenuChange: (menu: string) => void;
+};
 
+const menuGroups = [
+  {
+    label: "WORKSPACE",
+    items: [
+      { mark: "01", label: "Overview" },
+      { mark: "02", label: "Leads" },
+      { mark: "03", label: "Pipeline" },
+      { mark: "04", label: "Follow-ups" },
+    ],
+  },
+  {
+    label: "INTELLIGENCE",
+    items: [
+      { mark: "05", label: "Reports" },
+      { mark: "06", label: "Team" },
+    ],
+  },
+];
+
+function Sidebar({ activeMenu, onMenuChange }: SidebarProps) {
   return (
     <aside className="sidebar">
-      <div className="logo">
-        <div className="logo-icon">A</div>
+      <div className="brand-lockup">
+        <div className="brand-mark">
+          <span>A</span>
+          <i />
+        </div>
         <div>
-          <h2>Akky OS</h2>
-          <p>Business Command Center</p>
+          <strong>AkkyOS</strong>
+          <small>Leads CRM</small>
         </div>
       </div>
 
+      <div className="workspace-switcher">
+        <span className="workspace-avatar">AW</span>
+        <span>
+          <small>ACTIVE WORKSPACE</small>
+          <strong>AkkyOS Workspace</strong>
+        </span>
+        <button aria-label="Switch workspace">⌄</button>
+      </div>
+
       <nav className="menu">
-        {menuItems.map((item, index) => (
-          <a key={item.label} className={index === 0 ? "active" : ""}>
-            <span>{item.icon}</span>
-            {item.label}
-          </a>
+        {menuGroups.map((group) => (
+          <div className="menu-group" key={group.label}>
+            <p>{group.label}</p>
+            {group.items.map((item) => (
+              <button
+                key={item.label}
+                className={activeMenu === item.label ? "active" : ""}
+                onClick={() => onMenuChange(item.label)}
+              >
+                <span className="menu-mark">{item.mark}</span>
+                <span>{item.label}</span>
+                {activeMenu === item.label && <i />}
+              </button>
+            ))}
+          </div>
         ))}
       </nav>
 
-      <div className="sidebar-footer">
-        <p>System Status</p>
-        <strong>● Online</strong>
+      <div className="sidebar-bottom">
+        <button className="settings-button">
+          <span>⚙</span>
+          Settings
+        </button>
+        <div className="system-card">
+          <div className="system-orb"><span /></div>
+          <div>
+            <small>SYSTEM STATUS</small>
+            <strong>Workspace ready</strong>
+          </div>
+        </div>
       </div>
     </aside>
   );
