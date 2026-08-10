@@ -3,8 +3,12 @@ import "./App.css";
 import "./marketplace.css";
 import AdminLogin from "./components/AdminLogin";
 import CustomerPortal from "./components/CustomerPortal";
+import LeadManager from "./components/LeadManager";
+import EnquiryModal, { type EnquiryKind } from "./components/EnquiryModal";
+import "./lead-manager.css";
+import "./enquiry-modal.css";
 
-type Screen = "home" | "products" | "detail" | "services" | "support";
+type Screen = "home" | "products" | "detail" | "services" | "support" | "leads";
 type ProductStatus = "Live" | "In Development" | "Coming Soon" | "Custom Solution";
 
 type Product = {
@@ -150,20 +154,15 @@ const supportItems = ["Bug fixes", "Security updates", "Software updates", "Serv
 function App() {
   const [screen, setScreen] = useState<Screen>("home");
   const [selectedProduct, setSelectedProduct] = useState<Product>(products[1]);
-  const [notice, setNotice] = useState("");
   const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [showCustomerPortal, setShowCustomerPortal] = useState(false);
   const [adminName, setAdminName] = useState("");
+  const [enquiry, setEnquiry] = useState<{ kind: EnquiryKind; subject: string; productSlug?: string } | null>(null);
 
   const openProduct = (product: Product) => {
     setSelectedProduct(product);
     setScreen("detail");
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const showMessage = (message: string) => {
-    setNotice(message);
-    window.setTimeout(() => setNotice(""), 4500);
   };
 
   const scrollHomeSection = (id: string) => {
@@ -174,7 +173,8 @@ function App() {
   const adminAuthenticated = (name: string) => {
     setAdminName(name);
     setShowAdminLogin(false);
-    showMessage(`Welcome ${name}. Admin Console is ready.`);
+    setScreen("leads");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const productCard = (product: Product) => (
@@ -198,7 +198,7 @@ function App() {
       <div className="aurora aurora-two" />
       <div className="noise" />
 
-      <header className="site-header marketplace-header">
+      {screen !== "leads" && <header className="site-header marketplace-header">
         <button className="brand" onClick={() => setScreen("home")} aria-label="AkkyOS home">
           <span className="brand-cube"><i>A</i></span>
           <span><strong>AkkyOS</strong><small>BUSINESS PRODUCT STUDIO</small></span>
@@ -209,10 +209,12 @@ function App() {
           <button className={screen === "services" ? "active" : ""} onClick={() => setScreen("services")}>Services</button>
           <button className={screen === "support" ? "active" : ""} onClick={() => setScreen("support")}>Support</button>
         </nav>
-        <button className="login-pill" onClick={() => adminName ? setShowAdminLogin(true) : setShowCustomerPortal(true)}>
-          <span /> {adminName ? "Admin Console" : "My AkkyOS"}
+        <button className="login-pill" onClick={() => adminName ? setScreen("leads") : setShowCustomerPortal(true)}>
+          <span /> {adminName ? "Lead Console" : "My AkkyOS"}
         </button>
-      </header>
+      </header>}
+
+      {screen === "leads" && adminName && <LeadManager onClose={() => setScreen("home")} />}
 
       {screen === "home" && (
         <>
@@ -273,7 +275,7 @@ function App() {
               <h1>{selectedProduct.name}</h1>
               <p>{selectedProduct.description}</p>
               <div className="detail-actions">
-                <button className="primary-cta" onClick={() => showMessage(selectedProduct.status === "Live" ? "Demo and access request received. Contact workflow will be connected next." : `${selectedProduct.shortName} is ${selectedProduct.status.toLowerCase()}. We can discuss your requirement.`)}>{selectedProduct.status === "Live" ? "Request demo" : "Discuss requirement"}<span>↗</span></button>
+                <button className="primary-cta" onClick={() => setEnquiry({ kind: selectedProduct.status === "Live" ? "demo" : "quote", subject: selectedProduct.name, productSlug: selectedProduct.id })}>{selectedProduct.status === "Live" ? "Request demo" : "Discuss requirement"}<span>↗</span></button>
                 <button className="secondary-cta" onClick={() => setShowCustomerPortal(true)}>My AkkyOS</button>
               </div>
             </div>
@@ -284,29 +286,29 @@ function App() {
             <article className="feature-panel"><p>{selectedProduct.status === "Live" ? "AVAILABLE FEATURES" : "PLANNED / PROPOSED SCOPE"}</p><div>{selectedProduct.features.map((feature, index) => <span key={feature}><i>{String(index + 1).padStart(2, "0")}</i>{feature}</span>)}</div></article>
             <article><p>PLATFORM</p><h2>{selectedProduct.platform}</h2><span>{selectedProduct.status === "Live" ? "Demo access is available on request." : "Availability depends on roadmap or an approved custom scope."}</span></article>
           </div>
-          <div className="detail-cta"><div><p>PRICING & ACCESS</p><h2>{selectedProduct.status === "Live" ? "Get the right plan for your team." : "Tell us what you need."}</h2></div><button className="primary-cta" onClick={() => showMessage("Quote enquiry captured. The enquiry form will be connected in the next module.")}>Get quote <span>↗</span></button></div>
+          <div className="detail-cta"><div><p>PRICING & ACCESS</p><h2>{selectedProduct.status === "Live" ? "Get the right plan for your team." : "Tell us what you need."}</h2></div><button className="primary-cta" onClick={() => setEnquiry({ kind: "quote", subject: selectedProduct.name, productSlug: selectedProduct.id })}>Get quote <span>↗</span></button></div>
         </section>
       )}
 
       {screen === "services" && (
         <section className="services-page page-frame">
           <div className="page-intro"><p>AKKYOS SERVICES</p><h1>Custom engineering, without vague promises.</h1><span>We understand the workflow first, define the scope and then build the right solution.</span></div>
-          <div className="services-grid">{services.map((service, index) => <article className={`tone-${service.tone}`} key={service.name}><span>{service.icon}</span><i>{String(index + 1).padStart(2, "0")}</i><h2>{service.name}</h2><p>{service.copy}</p><button onClick={() => showMessage(`${service.name} enquiry noted. Quote form connection is the next module.`)}>Discuss project <b>↗</b></button></article>)}</div>
+          <div className="services-grid">{services.map((service, index) => <article className={`tone-${service.tone}`} key={service.name}><span>{service.icon}</span><i>{String(index + 1).padStart(2, "0")}</i><h2>{service.name}</h2><p>{service.copy}</p><button onClick={() => setEnquiry({ kind: "project", subject: service.name })}>Discuss project <b>↗</b></button></article>)}</div>
         </section>
       )}
 
       {screen === "support" && (
         <section className="support-page page-frame">
           <div className="page-intro"><p>AKKYOS CARE</p><h1>Support that protects the work.</h1><span>Support coverage is based on the selected plan and supported product or project.</span></div>
-          <div className="support-layout"><div className="support-list">{supportItems.map((item, index) => <article key={item}><span>{String(index + 1).padStart(2, "0")}</span><h2>{item}</h2><i>Included as per plan</i></article>)}</div><aside><p>AMC & TECHNICAL SUPPORT</p><h2>Choose coverage that matches your operations.</h2><span>We will publish plan pricing only after response times and exact coverage are finalised.</span><button className="primary-cta" onClick={() => showMessage("Support plan enquiry noted. Plan configuration comes next.")}>Request support quote <b>↗</b></button></aside></div>
+          <div className="support-layout"><div className="support-list">{supportItems.map((item, index) => <article key={item}><span>{String(index + 1).padStart(2, "0")}</span><h2>{item}</h2><i>Included as per plan</i></article>)}</div><aside><p>AMC & TECHNICAL SUPPORT</p><h2>Choose coverage that matches your operations.</h2><span>We will publish plan pricing only after response times and exact coverage are finalised.</span><button className="primary-cta" onClick={() => setEnquiry({ kind: "support", subject: "AMC & Technical Support" })}>Request support quote <b>↗</b></button></aside></div>
         </section>
       )}
 
       <footer className="market-footer"><button className="brand" onClick={() => setScreen("home")}><span className="brand-cube"><i>A</i></span><span><strong>AkkyOS</strong><small>SOFTWARE THAT WORKS FOR BUSINESS</small></span></button><p>Products · Services · Support</p><span>© 2026 AKKYOS.IN</span></footer>
 
-      {notice && <div className="toast" role="status"><span>AK</span>{notice}</div>}
       {showAdminLogin && <AdminLogin onClose={() => setShowAdminLogin(false)} onAdminAuthenticated={adminAuthenticated} />}
       {showCustomerPortal && <CustomerPortal onClose={() => setShowCustomerPortal(false)} onAdminAccess={() => { setShowCustomerPortal(false); setShowAdminLogin(true); }} />}
+      {enquiry && <EnquiryModal {...enquiry} onClose={() => setEnquiry(null)} />}
     </main>
   );
 }
