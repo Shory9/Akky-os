@@ -5,6 +5,7 @@ import AdminLogin from "./components/AdminLogin";
 import CustomerPortal from "./components/CustomerPortal";
 import LeadManager from "./components/LeadManager";
 import EnquiryModal, { type EnquiryKind } from "./components/EnquiryModal";
+import AkkyOrb, { setAkkyOrbState } from "./components/AkkyOrb";
 import "./lead-manager.css";
 import "./enquiry-modal.css";
 
@@ -60,6 +61,19 @@ const products: Product[] = [
       "Payment and recovery reports",
       "Secure role-based access",
     ],
+  },
+  {
+    id: "shopuday",
+    name: "Shopuday Namkin",
+    shortName: "Shopuday",
+    category: "Food Commerce",
+    status: "In Development",
+    description: "A retail and wholesale namkeen storefront with catalogue, cart, checkout and direct customer support.",
+    audience: "Namkeen retailers, wholesale buyers and food brands",
+    platform: "Web + Android",
+    icon: "SN",
+    tone: "amber",
+    features: ["Retail and wholesale shopping", "Product catalogue and search", "Cart and checkout", "Order tracking", "WhatsApp and Instagram commerce", "Responsive mobile experience"],
   },
   {
     id: "ai-chatbot",
@@ -160,6 +174,7 @@ function App() {
   const [enquiry, setEnquiry] = useState<{ kind: EnquiryKind; subject: string; productSlug?: string } | null>(null);
 
   const openProduct = (product: Product) => {
+    setAkkyOrbState("working", 750);
     setSelectedProduct(product);
     setScreen("detail");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -175,6 +190,7 @@ function App() {
     setShowAdminLogin(false);
     setScreen("leads");
     window.scrollTo({ top: 0, behavior: "smooth" });
+    setAkkyOrbState("success", 1100);
   };
 
   const productCard = (product: Product) => (
@@ -227,7 +243,7 @@ function App() {
                 <button className="primary-cta" onClick={() => scrollHomeSection("our-products")}>Explore products <span>↗</span></button>
                 <button className="secondary-cta" onClick={() => setScreen("services")}>Our services</button>
               </div>
-              <div className="hero-proof"><span><b>01</b> Live product</span><span><b>07</b> Product concepts</span><span><b>05</b> Services</span></div>
+              <div className="hero-proof"><span><b>01</b> Live product</span><span><b>08</b> Product concepts</span><span><b>05</b> Services</span></div>
             </div>
             <div className="featured-product tone-crimson">
               <div className="featured-label"><span>FEATURED · LIVE</span><i>01</i></div>
@@ -309,6 +325,7 @@ function App() {
       {showAdminLogin && <AdminLogin onClose={() => setShowAdminLogin(false)} onAdminAuthenticated={adminAuthenticated} />}
       {showCustomerPortal && <CustomerPortal onClose={() => setShowCustomerPortal(false)} onAdminAccess={() => { setShowCustomerPortal(false); setShowAdminLogin(true); }} />}
       {enquiry && <EnquiryModal {...enquiry} onClose={() => setEnquiry(null)} />}
+      <AkkyOrb />
     </main>
   );
 }
