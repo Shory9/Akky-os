@@ -77,6 +77,7 @@ const products: Product[] = [
     icon: "SN",
     tone: "amber",
     features: ["Retail and wholesale shopping", "Product catalogue and search", "Cart and checkout", "Order tracking", "WhatsApp and Instagram commerce", "Responsive mobile experience"],
+    priceLabel: "Early access",
   },
   {
     id: "ai-chatbot",
