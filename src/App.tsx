@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import "./marketplace.css";
 import AdminLogin from "./components/AdminLogin";
@@ -25,6 +25,7 @@ type Product = {
   image?: string;
   tone: string;
   features: string[];
+  priceLabel: string;
 };
 
 const products: Product[] = [
@@ -40,6 +41,7 @@ const products: Product[] = [
     icon: "A",
     tone: "violet",
     features: ["Unified customer identity", "Product catalogue", "License workspace", "Support access"],
+    priceLabel: "Early access",
   },
   {
     id: "recovery-crm",
@@ -61,6 +63,7 @@ const products: Product[] = [
       "Payment and recovery reports",
       "Secure role-based access",
     ],
+    priceLabel: "Get pricing",
   },
   {
     id: "shopuday",
@@ -87,6 +90,7 @@ const products: Product[] = [
     icon: "AI",
     tone: "cyan",
     features: ["Business knowledge setup", "Lead capture workflow", "Human hand-off", "Conversation insights"],
+    priceLabel: "Join waitlist",
   },
   {
     id: "whatsapp-ai",
@@ -100,6 +104,7 @@ const products: Product[] = [
     icon: "WA",
     tone: "emerald",
     features: ["Enquiry workflows", "Follow-up journeys", "Team hand-off", "Template management"],
+    priceLabel: "Join waitlist",
   },
   {
     id: "inventory-billing",
@@ -113,6 +118,7 @@ const products: Product[] = [
     icon: "IB",
     tone: "amber",
     features: ["Stock catalogue", "Billing workflow", "Purchase tracking", "Business reports"],
+    priceLabel: "Coming soon",
   },
   {
     id: "hr-payroll",
@@ -126,6 +132,7 @@ const products: Product[] = [
     icon: "HR",
     tone: "indigo",
     features: ["Employee records", "Attendance workflow", "Payroll preparation", "Leave tracking"],
+    priceLabel: "Coming soon",
   },
   {
     id: "school-management",
@@ -139,6 +146,7 @@ const products: Product[] = [
     icon: "SM",
     tone: "blue",
     features: ["Requirement discovery", "Student workflow", "Fee operations", "Institution reports"],
+    priceLabel: "Custom quote",
   },
   {
     id: "hospital-management",
@@ -152,6 +160,7 @@ const products: Product[] = [
     icon: "HM",
     tone: "teal",
     features: ["Requirement discovery", "Patient workflow", "Operations planning", "Custom reporting"],
+    priceLabel: "Custom quote",
   },
 ];
 
@@ -172,6 +181,15 @@ function App() {
   const [showCustomerPortal, setShowCustomerPortal] = useState(false);
   const [adminName, setAdminName] = useState("");
   const [enquiry, setEnquiry] = useState<{ kind: EnquiryKind; subject: string; productSlug?: string } | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [featuredIndex, setFeaturedIndex] = useState(1);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setFeaturedIndex((current) => (current + 1) % products.length), 4500);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const featured = products[featuredIndex];
 
   const openProduct = (product: Product) => {
     setAkkyOrbState("working", 750);
@@ -204,15 +222,29 @@ function App() {
       <p>{product.category}</p>
       <h3>{product.shortName}</h3>
       <small>{product.description}</small>
+      <div className="price-tag"><span>PRICING</span><strong>{product.priceLabel}</strong></div>
       <button onClick={() => openProduct(product)}>View product <span>↗</span></button>
     </article>
   );
 
   return (
-    <main className="cosmos marketplace-shell">
+    <main className="cosmos marketplace-shell theme-dark">
       <div className="aurora aurora-one" />
       <div className="aurora aurora-two" />
       <div className="noise" />
+
+      {screen !== "leads" && <>
+        <button className={`menu-trigger ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(!menuOpen)} aria-label="Open navigation"><i /><i /><i /></button>
+        <aside className={`premium-nav ${menuOpen ? "open" : ""}`}>
+          <div className="premium-nav-brand"><span>A</span><div><strong>AkkyOS</strong><small>BUSINESS OS</small></div></div>
+          <nav>
+            {([['home','Home','01'],['products','Products','02'],['services','Services','03'],['support','Support','04']] as const).map(([target,label,no]) => <button key={target} className={screen === target || (target === 'products' && screen === 'detail') ? 'active' : ''} onClick={() => { setScreen(target); setMenuOpen(false); }}><i>{no}</i><span>{label}</span><b>→</b></button>)}
+          </nav>
+          <div className="nav-highlight"><small>FEATURED PRODUCT</small><strong>Recovery CRM V2</strong><span>Live · Web + Android</span><button onClick={() => { openProduct(products[1]); setMenuOpen(false); }}>Explore ↗</button></div>
+          <button className="nav-account" onClick={() => { setShowCustomerPortal(true); setMenuOpen(false); }}><span>AK</span><div><strong>My AkkyOS</strong><small>Customer workspace</small></div><b>↗</b></button>
+        </aside>
+        {menuOpen && <button className="nav-scrim" onClick={() => setMenuOpen(false)} aria-label="Close navigation" />}
+      </>}
 
       {screen !== "leads" && <header className="site-header marketplace-header">
         <button className="brand" onClick={() => setScreen("home")} aria-label="AkkyOS home">
@@ -245,31 +277,33 @@ function App() {
               </div>
               <div className="hero-proof"><span><b>01</b> Live product</span><span><b>08</b> Product concepts</span><span><b>05</b> Services</span></div>
             </div>
-            <div className="featured-product tone-crimson">
-              <div className="featured-label"><span>FEATURED · LIVE</span><i>01</i></div>
-              <div className="featured-icon"><img src="/shiv-shakti-app-icon.png" alt="Shiv Shakti Recovery CRM" /></div>
-              <p>RECOVERY OPERATIONS</p>
-              <h2>Shiv Shakti<br />Recovery CRM V2</h2>
-              <small>Our production-ready field recovery platform for teams, cases and verified operations.</small>
-              <button onClick={() => openProduct(products[1])}>Explore live product <span>↗</span></button>
+            <div className={`featured-product rotating-feature tone-${featured.tone}`} key={featured.id}>
+              <div className="featured-label"><span>PRODUCT SHOWCASE · {featured.status.toUpperCase()}</span><i>{String(featuredIndex + 1).padStart(2, "0")}</i></div>
+              <div className="featured-icon">{featured.image ? <img src={featured.image} alt={featured.name} /> : <strong>{featured.icon}</strong>}</div>
+              <p>{featured.category}</p>
+              <h2>{featured.shortName}</h2>
+              <small>{featured.description}</small>
+              <div className="feature-dots">{products.map((product, index) => <button className={index === featuredIndex ? "active" : ""} onClick={() => setFeaturedIndex(index)} aria-label={`Show ${product.name}`} key={product.id} />)}</div>
+              <button onClick={() => openProduct(featured)}>Explore product <span>↗</span></button>
             </div>
           </section>
 
           <section className="home-products" id="our-products">
-            <div className="section-heading"><div><p>OUR PRODUCTS</p><h2>A growing product universe.</h2></div><span>Every product has a clear, honest release status.</span></div>
-            <div className="catalog-grid">{products.map(productCard)}</div>
-            <button className="section-link" onClick={() => setScreen("products")}>View complete product catalogue <span>→</span></button>
-          </section>
-
-          <section className="home-services">
-            <div className="section-heading"><div><p>OUR SERVICES</p><h2>Expert work around the product.</h2></div><span>For requirements that need a custom technical solution.</span></div>
-            <div className="service-strip">{services.map((service) => <article className={`tone-${service.tone}`} key={service.name}><span>{service.icon}</span><h3>{service.name}</h3><p>{service.copy}</p></article>)}</div>
-            <button className="section-link" onClick={() => setScreen("services")}>Explore all services <span>→</span></button>
-          </section>
-
-          <section className="support-banner">
-            <div><p>AKKYOS CARE</p><h2>Software needs a team after launch.</h2><span>Maintenance, monitoring and technical support for supported products and projects.</span></div>
-            <button className="primary-cta" onClick={() => setScreen("support")}>View support plans <span>↗</span></button>
+            <div className={`home-product-detail tone-${featured.tone}`} key={`detail-${featured.id}`}>
+              <div className="home-detail-copy">
+                <div className="detail-meta"><span>{featured.category}</span><b className={`status-badge status-${featured.status.toLowerCase().replaceAll(" ", "-")}`}>{featured.status}</b></div>
+                <h2>{featured.name}</h2>
+                <p>{featured.description}</p>
+                <div className="home-feature-list">{featured.features.map((feature, index) => <span key={feature}><i>{String(index + 1).padStart(2, "0")}</i>{feature}</span>)}</div>
+              </div>
+              <aside className="home-price-card">
+                <small>PRICE & ACCESS</small>
+                <strong>{featured.priceLabel}</strong>
+                <p>{featured.status === "Live" ? "Final plan depends on users, access and support coverage." : featured.status === "Custom Solution" ? "Final price is shared after requirement and scope approval." : "Register your interest to receive availability updates."}</p>
+                <button className="primary-cta" onClick={() => setEnquiry({ kind: featured.status === "Live" ? "demo" : "quote", subject: featured.name, productSlug: featured.id })}>{featured.status === "Live" ? "Request demo" : featured.status === "Coming Soon" ? "Join waitlist" : "Get quote"}<span>↗</span></button>
+                <button className="detail-link" onClick={() => openProduct(featured)}>View complete details <span>→</span></button>
+              </aside>
+            </div>
           </section>
         </>
       )}
@@ -277,7 +311,9 @@ function App() {
       {screen === "products" && (
         <section className="catalog-page page-frame">
           <div className="page-intro"><p>PRODUCT CATALOGUE</p><h1>Tools for real business operations.</h1><span>Live products, active development and future concepts are clearly separated.</span></div>
-          <div className="catalog-grid catalog-grid-page">{products.map(productCard)}</div>
+          <div className="product-section"><div className="product-section-title"><span>01</span><div><p>AVAILABLE NOW</p><h2>Live & active products</h2></div></div><div className="catalog-grid catalog-grid-page">{products.filter((product) => product.status === "Live" || product.status === "In Development").map(productCard)}</div></div>
+          <div className="product-section"><div className="product-section-title"><span>02</span><div><p>NEXT FROM AKKYOS</p><h2>Upcoming products</h2></div></div><div className="catalog-grid catalog-grid-page">{products.filter((product) => product.status === "Coming Soon").map(productCard)}</div></div>
+          <div className="product-section"><div className="product-section-title"><span>03</span><div><p>BUILT AROUND YOUR BUSINESS</p><h2>Custom solutions</h2></div></div><div className="catalog-grid catalog-grid-page">{products.filter((product) => product.status === "Custom Solution").map(productCard)}</div></div>
         </section>
       )}
 
