@@ -175,6 +175,24 @@ const services = [
 
 const supportItems = ["Bug fixes", "Security updates", "Software updates", "Server monitoring", "Backup checks", "Technical support", "Performance maintenance"];
 
+const websitePlans = [
+  { name: "Launch", price: "₹7,999", note: "one-time", bestFor: "New local businesses", features: ["Up to 5 pages", "Mobile responsive UI", "WhatsApp contact", "Basic SEO setup"] },
+  { name: "Business", price: "₹14,999", note: "one-time", bestFor: "Growing brands", features: ["Up to 10 pages", "Lead enquiry system", "Admin-ready setup", "Analytics integration"], popular: true },
+  { name: "Commerce", price: "₹24,999", note: "starting one-time", bestFor: "Product businesses", features: ["Product catalogue", "Cart & checkout UI", "Customer login", "Payment-ready setup"] },
+];
+
+const appPlans = [
+  { name: "App Starter", price: "₹24,999", note: "starting one-time", bestFor: "Simple Android app", features: ["Android application", "Login & profile", "Core business screens", "Play Store-ready build"] },
+  { name: "Business App", price: "₹49,999", note: "starting one-time", bestFor: "Operational apps", features: ["Customer or staff roles", "Supabase database", "Admin dashboard", "Notifications & reports"], popular: true },
+  { name: "Web + App", price: "₹64,999", note: "starting one-time", bestFor: "Complete digital setup", features: ["Business website", "Android application", "Shared admin dashboard", "Unified customer data"] },
+];
+
+const carePlans = [
+  { name: "Care Basic", price: "₹999", note: "/ month", features: ["Hosting monitoring", "Backup checks", "2 small updates", "Email support"] },
+  { name: "Care Growth", price: "₹1,999", note: "/ month", features: ["Everything in Basic", "Product & offer updates", "WhatsApp lead support", "Monthly health report"], popular: true },
+  { name: "Care Pro", price: "₹3,999", note: "/ month", features: ["Everything in Growth", "Priority support", "Lead workflow help", "Monthly improvement work"] },
+];
+
 function App() {
   const [screen, setScreen] = useState<Screen>("home");
   const [selectedProduct, setSelectedProduct] = useState<Product>(products[1]);
@@ -347,13 +365,16 @@ function App() {
         <section className="services-page page-frame">
           <div className="page-intro"><p>AKKYOS SERVICES</p><h1>Custom engineering, without vague promises.</h1><span>We understand the workflow first, define the scope and then build the right solution.</span></div>
           <div className="services-grid">{services.map((service, index) => <article className={`tone-${service.tone}`} key={service.name}><span>{service.icon}</span><i>{String(index + 1).padStart(2, "0")}</i><h2>{service.name}</h2><p>{service.copy}</p><button onClick={() => setEnquiry({ kind: "project", subject: service.name })}>Discuss project <b>↗</b></button></article>)}</div>
+          <section className="pricing-block"><div className="pricing-heading"><p>WEBSITE DEVELOPMENT</p><h2>Build once. Own your business presence.</h2><span>Clear starting prices. Domain, paid services and custom integrations are quoted separately.</span></div><div className="pricing-grid">{websitePlans.map((plan) => <article className={plan.popular ? "popular" : ""} key={plan.name}>{plan.popular && <b className="popular-tag">MOST POPULAR</b>}<small>{plan.bestFor}</small><h3>{plan.name}</h3><div className="plan-price"><strong>{plan.price}</strong><span>{plan.note}</span></div><ul>{plan.features.map((feature) => <li key={feature}>✓ {feature}</li>)}</ul><button onClick={() => setEnquiry({ kind: "project", subject: `${plan.name} Website Plan` })}>Discuss this plan <span>↗</span></button></article>)}</div></section>
+          <section className="pricing-block app-pricing"><div className="pricing-heading"><p>MOBILE APP DEVELOPMENT</p><h2>From Android app to a complete platform.</h2><span>These are starting prices for a defined MVP. Complex workflows, external APIs, Play Store fees and paid services are quoted separately.</span></div><div className="pricing-grid">{appPlans.map((plan) => <article className={plan.popular ? "popular" : ""} key={plan.name}>{plan.popular && <b className="popular-tag">BEST FOR BUSINESS</b>}<small>{plan.bestFor}</small><h3>{plan.name}</h3><div className="plan-price"><strong>{plan.price}</strong><span>{plan.note}</span></div><ul>{plan.features.map((feature) => <li key={feature}>✓ {feature}</li>)}</ul><button onClick={() => setEnquiry({ kind: "project", subject: `${plan.name} Development` })}>Discuss app project <span>↗</span></button></article>)}</div></section>
+          <section className="pricing-block care-pricing"><div className="pricing-heading"><p>AKKYOS BUSINESS CARE</p><h2>Keep it running every month.</h2><span>Development charge is one-time. Business Care is an optional monthly service and can later use Razorpay AutoPay after customer authorisation.</span></div><div className="pricing-grid">{carePlans.map((plan) => <article className={plan.popular ? "popular" : ""} key={plan.name}>{plan.popular && <b className="popular-tag">RECOMMENDED</b>}<small>MONTHLY SUPPORT</small><h3>{plan.name}</h3><div className="plan-price"><strong>{plan.price}</strong><span>{plan.note}</span></div><ul>{plan.features.map((feature) => <li key={feature}>✓ {feature}</li>)}</ul><button onClick={() => setEnquiry({ kind: "support", subject: plan.name })}>Choose care plan <span>↗</span></button></article>)}</div><p className="pricing-disclaimer">Final scope and price are confirmed before payment. Recurring payment starts only after the customer approves the Razorpay mandate.</p></section>
         </section>
       )}
 
       {screen === "support" && (
         <section className="support-page page-frame">
           <div className="page-intro"><p>AKKYOS CARE</p><h1>Support that protects the work.</h1><span>Support coverage is based on the selected plan and supported product or project.</span></div>
-          <div className="support-layout"><div className="support-list">{supportItems.map((item, index) => <article key={item}><span>{String(index + 1).padStart(2, "0")}</span><h2>{item}</h2><i>Included as per plan</i></article>)}</div><aside><p>AMC & TECHNICAL SUPPORT</p><h2>Choose coverage that matches your operations.</h2><span>We will publish plan pricing only after response times and exact coverage are finalised.</span><button className="primary-cta" onClick={() => setEnquiry({ kind: "support", subject: "AMC & Technical Support" })}>Request support quote <b>↗</b></button></aside></div>
+          <div className="support-layout"><div className="support-list">{supportItems.map((item, index) => <article key={item}><span>{String(index + 1).padStart(2, "0")}</span><h2>{item}</h2><i>Included as per plan</i></article>)}</div><aside><p>AMC & TECHNICAL SUPPORT</p><h2>Monthly care from ₹999.</h2><span>Choose Basic, Growth or Pro coverage according to update frequency and support needs.</span><button className="primary-cta" onClick={() => { setScreen("services"); window.setTimeout(() => document.querySelector(".care-pricing")?.scrollIntoView({ behavior: "smooth" }), 0); }}>View care plans <b>↗</b></button></aside></div>
         </section>
       )}
 
