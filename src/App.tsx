@@ -26,6 +26,7 @@ type Product = {
   tone: string;
   features: string[];
   priceLabel: string;
+  demoUrl?: string;
 };
 
 const products: Product[] = [
@@ -64,6 +65,28 @@ const products: Product[] = [
       "Secure role-based access",
     ],
     priceLabel: "Get pricing",
+  },
+  {
+    id: "solar-business-platform",
+    name: "Solar Business Platform",
+    shortName: "Solar Business",
+    category: "Solar Sales & Operations",
+    status: "Live",
+    description: "A ready-to-customize solar website with AI savings tools, quotations, lead management, sales register and executive operations.",
+    audience: "Solar installers, EPC companies and rooftop solar sales teams",
+    platform: "Web",
+    icon: "SP",
+    tone: "emerald",
+    features: [
+      "Customer-facing solar website",
+      "Savings calculator and AI roof analysis",
+      "Instant quotation workflow",
+      "Lead and sales management",
+      "Executive attendance and GPS operations",
+      "Ready for custom branding",
+    ],
+    priceLabel: "Get pricing",
+    demoUrl: "https://mahavir-solar-preview.akkyparmarp.chatgpt.site",
   },
   {
     id: "shopuday",
@@ -294,7 +317,7 @@ function App() {
                 <button className="primary-cta" onClick={() => scrollHomeSection("our-products")}>Explore products <span>↗</span></button>
                 <button className="secondary-cta" onClick={() => setScreen("services")}>Our services</button>
               </div>
-              <div className="hero-proof"><span><b>01</b> Live product</span><span><b>08</b> Product concepts</span><span><b>05</b> Services</span></div>
+              <div className="hero-proof"><span><b>02</b> Live products</span><span><b>09</b> Products & concepts</span><span><b>05</b> Services</span></div>
             </div>
             <div className={`featured-product rotating-feature tone-${featured.tone}`} key={featured.id}>
               <div className="featured-label"><span>PRODUCT SHOWCASE · {featured.status.toUpperCase()}</span><i>{String(featuredIndex + 1).padStart(2, "0")}</i></div>
@@ -346,6 +369,7 @@ function App() {
               <h1>{selectedProduct.name}</h1>
               <p>{selectedProduct.description}</p>
               <div className="detail-actions">
+                {selectedProduct.demoUrl && <button className="primary-cta" onClick={() => window.open(selectedProduct.demoUrl, "_blank", "noopener,noreferrer")}>Open live demo<span>↗</span></button>}
                 <button className="primary-cta" onClick={() => setEnquiry({ kind: selectedProduct.status === "Live" ? "demo" : "quote", subject: selectedProduct.name, productSlug: selectedProduct.id })}>{selectedProduct.status === "Live" ? "Request demo" : "Discuss requirement"}<span>↗</span></button>
                 <button className="secondary-cta" onClick={() => setShowCustomerPortal(true)}>My AkkyOS</button>
               </div>
