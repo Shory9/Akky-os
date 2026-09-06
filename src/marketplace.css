@@ -103,3 +103,25 @@
 .services-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.services-grid article{min-height:235px;padding:22px;border-radius:20px}.services-grid article>span{width:47px;height:47px;border-radius:14px;font-size:12px}.services-grid article>i{right:21px;top:21px}.services-grid h2{margin:26px 0 9px;font-size:22px}.services-grid p{font-size:10px;line-height:1.55}.services-grid button{left:22px;bottom:18px}
 @media(max-width:1050px){.services-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.services-grid{grid-template-columns:1fr}.services-grid article{min-height:215px;padding:20px}.services-grid h2{margin-top:22px;font-size:20px}}
+
+/* Verified usability fixes: keep the existing visual language while improving legibility and control affordance. */
+@media(min-width:851px){.menu-trigger{display:none}}
+.nav-highlight span{font-size:12px}
+.market-hero-copy .eyebrow{font-size:12px}
+.featured-label{font-size:12px;letter-spacing:.08em}
+.featured-product>p{font-size:12px;letter-spacing:.08em}
+.home-feature-list span{font-size:12px;padding:11px 12px;border:0;border-left:2px solid rgba(var(--tone-rgb),.5);border-radius:0;background:transparent}
+.hero-actions>.primary-cta,.hero-actions>.secondary-cta{height:56px}
+.hero-actions>.secondary-cta{display:flex;align-items:center}
+.theme-dark .featured-product>button{border:1px solid rgba(var(--tone-rgb),.42);background:rgba(var(--tone-rgb),.13);box-shadow:none}
+.feature-dots{gap:2px}
+.feature-dots button{position:relative;width:24px;height:24px;background:transparent}
+.feature-dots button::before{content:"";position:absolute;left:50%;top:50%;width:10px;height:10px;border-radius:99px;background:rgba(255,255,255,.28);transform:translate(-50%,-50%);transition:.25s}
+.feature-dots button.active{width:24px;background:transparent;box-shadow:none}
+.feature-dots button.active::before{width:18px;background:rgb(var(--tone-rgb));box-shadow:0 0 12px rgba(var(--tone-rgb),.7)}
+.detail-link{padding:14px 4px;color:#d8cedf;font-size:12px}
+.market-footer p,.market-footer>span{font-size:12px}
+
+@media(max-width:560px){
+  .hero-proof span{font-size:12px}
+}

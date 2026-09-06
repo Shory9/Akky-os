@@ -276,8 +276,8 @@ function App() {
       <div className="noise" />
 
       {screen !== "leads" && <>
-        <button className={`menu-trigger ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(!menuOpen)} aria-label="Open navigation"><i /><i /><i /></button>
-        <aside className={`premium-nav ${menuOpen ? "open" : ""}`}>
+        <button className={`menu-trigger ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} aria-controls="premium-navigation"><i /><i /><i /></button>
+        <aside className={`premium-nav ${menuOpen ? "open" : ""}`} id="premium-navigation" aria-hidden={!menuOpen} inert={!menuOpen}>
           <div className="premium-nav-brand"><span>A</span><div><strong>AkkyOS</strong><small>BUSINESS OS</small></div></div>
           <nav>
             {([['home','Home','01'],['products','Products','02'],['services','Services','03'],['support','Support','04']] as const).map(([target,label,no]) => <button key={target} className={screen === target || (target === 'products' && screen === 'detail') ? 'active' : ''} onClick={() => { setScreen(target); setMenuOpen(false); }}><i>{no}</i><span>{label}</span><b>→</b></button>)}
@@ -320,7 +320,7 @@ function App() {
               <div className="hero-proof"><span><b>02</b> Live products</span><span><b>09</b> Products & concepts</span><span><b>05</b> Services</span></div>
             </div>
             <div className={`featured-product rotating-feature tone-${featured.tone}`} key={featured.id}>
-              <div className="featured-label"><span>PRODUCT SHOWCASE · {featured.status.toUpperCase()}</span><i>{String(featuredIndex + 1).padStart(2, "0")}</i></div>
+              <div className="featured-label"><span>Product showcase · {featured.status}</span><i>{String(featuredIndex + 1).padStart(2, "0")}</i></div>
               <div className="featured-icon">{featured.image ? <img src={featured.image} alt={featured.name} /> : <strong>{featured.icon}</strong>}</div>
               <p>{featured.category}</p>
               <h2>{featured.shortName}</h2>
